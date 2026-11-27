@@ -9,7 +9,6 @@ import android.graphics.Typeface
 import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
-import android.view.Gravity
 import android.view.ViewGroup
 import android.widget.*
 import androidx.appcompat.app.AlertDialog
@@ -53,7 +52,6 @@ class MainActivity : AppCompatActivity() {
         }
         rootScroll.addView(rootCol)
 
-        // Header Title
         val title = TextView(this).apply {
             text = "Insta Liquid Glass"
             textSize = 26f
@@ -73,7 +71,6 @@ class MainActivity : AppCompatActivity() {
         rootCol.addView(subtitle)
         rootCol.addView(statusText)
 
-        // Interactive Live Preview
         previewView = GlassPreviewView(this).apply {
             layoutParams = LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
@@ -85,7 +82,6 @@ class MainActivity : AppCompatActivity() {
         previewView.applyConfig(config)
         rootCol.addView(previewView)
 
-        // Quick Action Row (Restart Instagram + Presets)
         val actionRow = LinearLayout(this).apply {
             orientation = LinearLayout.HORIZONTAL
             layoutParams = LinearLayout.LayoutParams(
@@ -112,7 +108,6 @@ class MainActivity : AppCompatActivity() {
         actionRow.addView(btnBackup)
         rootCol.addView(actionRow)
 
-        // Presets Horizontal Strip
         val presetScroll = HorizontalScrollView(this).apply {
             isHorizontalScrollBarEnabled = false
             layoutParams = LinearLayout.LayoutParams(
@@ -329,7 +324,6 @@ class MainActivity : AppCompatActivity() {
             }
         } catch (_: Throwable) {
         }
-        // Fallback: open App Info page so user can tap Force Stop
         try {
             val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
                 data = Uri.parse("package:com.instagram.android")

@@ -1,6 +1,7 @@
 package com.muratbek.instaliquidglass.xposed
 
 import android.app.Activity
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import io.github.libxposed.api.XposedModule
@@ -11,27 +12,38 @@ class LiquidGlassModule : XposedModule() {
 
     private var controller: TabBarHookController? = null
 
+    private fun logInfo(msg: String) {
+        log(Log.INFO, "InstaLiquidGlass", msg)
+    }
+
+    private fun logErr(msg: String, tr: Throwable? = null) {
+        if (tr != null) {
+            log(Log.ERROR, "InstaLiquidGlass", msg, tr)
+        } else {
+            log(Log.ERROR, "InstaLiquidGlass", msg)
+        }
+    }
+
     override fun onModuleLoaded(param: ModuleLoadedParam) {
-        log("InstaLiquidGlass loaded in process: ${param.processName} (API ${apiVersion})")
+        logInfo("Loaded in process: ${param.processName} (API $apiVersion)")
     }
 
     override fun onPackageLoaded(param: PackageLoadedParam) {
         if (param.packageName != "com.instagram.android") return
         if (!param.isFirstPackage) return
 
-        log("Initializing Liquid Glass hooks for com.instagram.android")
+        logInfo("Initializing Liquid Glass hooks for com.instagram.android")
 
         val remotePrefs = try {
             getRemotePreferences("liquid_glass_prefs")
         } catch (t: Throwable) {
-            log("RemotePreferences fallback: ${t.message}")
+            logErr("RemotePreferences fallback: ${t.message}", t)
             null
         }
 
-        val hookController = TabBarHookController(remotePrefs) { msg -> log(msg) }
+        val hookController = TabBarHookController(remotePrefs) { msg -> logInfo(msg) }
         controller = hookController
 
-        // Hook 1: Activity.onResume() -> Reliable entry after InstagramMainActivity inflates its tab bar
         try {
             val onResumeMethod = Activity::class.java.getDeclaredMethod("onResume")
             hook(onResumeMethod).intercept { chain ->
@@ -43,10 +55,9 @@ class LiquidGlassModule : XposedModule() {
                 result
             }
         } catch (t: Throwable) {
-            log("Failed hooking Activity.onResume: ${t.message}")
+            logErr("Failed hooking Activity.onResume: ${t.message}", t)
         }
 
-        // Hook 2: ViewGroup.addView(View, int, ViewGroup.LayoutParams) -> Catches dynamic tab_bar inflation
         try {
             val addViewMethod = ViewGroup::class.java.getDeclaredMethod(
                 "addView",
@@ -73,7 +84,7 @@ class LiquidGlassModule : XposedModule() {
                 result
             }
         } catch (t: Throwable) {
-            log("Failed hooking ViewGroup.addView: ${t.message}")
+            logErr("Failed hooking ViewGroup.addView: ${t.message}", t)
         }
     }
 }

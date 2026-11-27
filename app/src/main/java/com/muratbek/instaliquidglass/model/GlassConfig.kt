@@ -21,7 +21,7 @@ data class GlassConfig(
     val barHeightDp: Float = 60f,           // 48..76 dp
     val pillEnabled: Boolean = true,
     val pillAlpha: Float = 0.26f,           // 0.05..0.70
-    val pillBounce: Float = 0.68f,          // 0.30..0.95 (spring damping inverse)
+    val pillBounce: Float = 0.68f,          // 0.30..0.95
     val touchRubberBand: Boolean = true,
     val dragToSwitchTab: Boolean = true,
     val hideLabels: Boolean = true,

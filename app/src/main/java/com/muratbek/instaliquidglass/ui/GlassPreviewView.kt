@@ -111,8 +111,6 @@ class GlassPreviewView @JvmOverloads constructor(
     }
 
     override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
-        val loc = IntArray(2)
-        pillContainer.getLocationInWindow(loc)
         val localX = ev.x - pillContainer.left
         val localY = ev.y - pillContainer.top
         if (localX in 0f..pillContainer.width.toFloat() && localY in 0f..pillContainer.height.toFloat()) {
@@ -133,7 +131,6 @@ class GlassPreviewView @JvmOverloads constructor(
         val h = height.toFloat()
         val density = resources.displayMetrics.density
 
-        // Vibrant Instagram-like feed gradient backdrop so blur & refraction are clearly visible
         bgPaint.shader = LinearGradient(
             0f, 0f, w, h,
             intArrayOf(0xFF1E1B4B.toInt(), 0xFF831843.toInt(), 0xFF0F766E.toInt()),
@@ -142,7 +139,6 @@ class GlassPreviewView @JvmOverloads constructor(
         )
         canvas.drawRoundRect(RectF(0f, 0f, w, h), 22f * density, 22f * density, bgPaint)
 
-        // Simulated feed photo cards scrolling underneath the floating bar
         cardPaint.color = 0x55F43F5E
         canvas.drawRoundRect(RectF(18f * density, 16f * density, w * 0.52f, h - 10f * density), 14f * density, 14f * density, cardPaint)
 

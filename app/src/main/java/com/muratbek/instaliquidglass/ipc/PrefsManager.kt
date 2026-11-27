@@ -26,7 +26,6 @@ object PrefsManager {
             XposedServiceHelper.registerListener(object : XposedServiceHelper.OnServiceListener {
                 override fun onServiceBind(service: XposedService) {
                     xposedService = service
-                    // Sync existing local config into Xposed remote prefs on bind
                     val remote = service.getRemotePreferences(PREF_GROUP)
                     if (remote != null && remote.all.isEmpty() && localPrefs != null) {
                         GlassConfig.fromPrefs(localPrefs).writeTo(remote.edit())
@@ -41,7 +40,6 @@ object PrefsManager {
                 }
             })
         } catch (_: Throwable) {
-            // Running outside LSPosed context
         }
     }
 

@@ -128,7 +128,6 @@ class TabBarHookController(
         fun install() {
             val activity = activityRef.get() ?: return
 
-            // Enable edge-to-edge transparent system navigation bar so content flows underneath
             try {
                 val window = activity.window
                 window.navigationBarColor = Color.TRANSPARENT
@@ -138,13 +137,9 @@ class TabBarHookController(
             } catch (_: Throwable) {
             }
 
-            // Strip opaque backgrounds from parent bottom section containers
             stripParentOpaqueBackgrounds()
-
-            // Inject LiquidGlassPillView behind tab icons while preserving Instagram click targets
             injectPillLayer()
 
-            // Guard margins & height so Instagram relayouts never snap the bar back to full width
             tabBar.addOnLayoutChangeListener { _, _, _, _, _, _, _, _, _ ->
                 if (!guardingLayout && currentConfig.enabled) {
                     enforceFloatingLayout()
@@ -152,13 +147,8 @@ class TabBarHookController(
                 syncActiveTabPill(animate = true)
             }
 
-            // Continuous backdrop invalidation on scroll/draw
             tabBar.viewTreeObserver.addOnPreDrawListener(preDrawListener)
-
-            // Touch rubber-band + spotlight + drag-to-switch-tab gesture
             installTouchAndDragGestures()
-
-            // Monitor feed scroll for optional auto-compact mode
             installScrollCompactWatcher(activity.window.decorView)
 
             applyStyling()
@@ -266,17 +256,14 @@ class TabBarHookController(
             val createId = res.getIdentifier("creation_tab", "id", pkg)
             val clipsId = res.getIdentifier("clips_tab", "id", pkg)
 
-            val visibleTabs = mutableListOf<View>()
             for (i in 0 until tabBar.childCount) {
                 val child = tabBar.getChildAt(i) ?: continue
                 if (createId != 0 && child.id == createId) {
                     child.visibility = if (currentConfig.hideCreateTab) View.GONE else View.VISIBLE
                 }
                 if (child.visibility == View.VISIBLE) {
-                    visibleTabs.add(child)
                     applyIconAndLabelTweaks(child)
                 }
-                // Detect if Reels tab is selected to boost glass contrast over SurfaceView
                 if (clipsId != 0 && child.id == clipsId && child.isSelected) {
                     capsuleDrawable.setReelsSurfaceActive(true)
                 } else if (child.isSelected) {
@@ -397,7 +384,7 @@ class TabBarHookController(
                         tabBar.postDelayed({ syncActiveTabPill(animate = true) }, 40L)
                     }
                 }
-                false // Allow normal click & long-press (e.g. InstaEclipse menu) to propagate!
+                false
             }
         }
 

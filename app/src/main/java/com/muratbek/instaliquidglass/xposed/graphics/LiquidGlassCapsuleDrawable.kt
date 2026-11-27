@@ -5,7 +5,6 @@ import android.graphics.*
 import android.graphics.drawable.Drawable
 import android.os.Build
 import android.view.View
-import android.view.ViewGroup
 import com.muratbek.instaliquidglass.model.GlassConfig
 
 class LiquidGlassCapsuleDrawable(
@@ -76,7 +75,6 @@ class LiquidGlassCapsuleDrawable(
             else -> isSystemDark()
         }
 
-        // Soft floating ambient elevation shadow
         rectF.set(0f, 0f, w, h)
         shadowPaint.color = Color.TRANSPARENT
         shadowPaint.setShadowLayer(
@@ -87,7 +85,6 @@ class LiquidGlassCapsuleDrawable(
         )
         canvas.drawRoundRect(rectF, radiusPx, radiusPx, shadowPaint)
 
-        // Hardware RenderNode + RenderEffect + AGSL Liquid Glass pipeline (Android 13+ / API 33+)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
             canvas.isHardwareAccelerated &&
             backdropNode != null &&
@@ -99,7 +96,6 @@ class LiquidGlassCapsuleDrawable(
             }
         }
 
-        // Graceful fallback for API 26-32 or software canvas
         drawFallbackGlass(canvas, w, h, radiusPx, density, dark)
     }
 
@@ -125,12 +121,10 @@ class LiquidGlassCapsuleDrawable(
             val offsetX = (locBar[0] - locRoot[0]).toFloat()
             val offsetY = (locBar[1] - locRoot[1]).toFloat()
 
-            // 1. Record root content behind the tab bar into backdropNode
             bNode.setPosition(0, 0, width, height)
             val recCanvas = bNode.beginRecording(width, height)
             isCapturing = true
             try {
-                // Darken base slightly when Reels SurfaceView is underneath
                 recCanvas.drawColor(if (dark) 0xFF0B0E14.toInt() else 0xFFEBF0F5.toInt())
                 recCanvas.translate(-offsetX, -offsetY)
                 root.draw(recCanvas)
@@ -139,7 +133,6 @@ class LiquidGlassCapsuleDrawable(
                 bNode.endRecording()
             }
 
-            // 2. Apply Gaussian Blur + Vibrancy Saturation RenderEffect
             val effectiveBlur = (config.blurRadiusDp * density).coerceIn(0.5f, 140f)
             val blurEffect = RenderEffect.createBlurEffect(
                 effectiveBlur,
@@ -156,10 +149,8 @@ class LiquidGlassCapsuleDrawable(
             blurCanvas.drawRenderNode(bNode)
             fNode.endRecording()
 
-            // 3. Apply AGSL Liquid Glass Refraction + Specular Rim Shader
             var tint = config.resolveTintColor(dark)
             if (isReelsSurfaceActive && config.reelsAdaptiveGlass) {
-                // Boost opacity slightly over SurfaceView video layers for crisp legibility
                 val boostedAlpha = ((Color.alpha(tint) / 255f) + 0.24f).coerceIn(0.25f, 0.85f)
                 tint = Color.argb((boostedAlpha * 255).toInt(), Color.red(tint), Color.green(tint), Color.blue(tint))
             }
@@ -185,7 +176,6 @@ class LiquidGlassCapsuleDrawable(
             shader.setFloatUniform("touchIntensity", touchIntensity)
             shader.setFloatUniform("isDark", if (dark) 1.0f else 0.0f)
 
-            // Draw through a temporary RenderNode with AGSL shader attached
             val outNode = RenderNode("IGLiquidOut")
             outNode.setPosition(0, 0, width, height)
             outNode.setRenderEffect(agslEffect)
