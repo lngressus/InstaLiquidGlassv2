@@ -1,0 +1,3 @@
+-keep class com.muratbek.instaliquidglass.xposed.** { *; }
+-keep class io.github.libxposed.** { *; }
+-dontwarn io.github.libxposed.**

@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Insta Liquid Glass</string>
+    <string name="module_description">iOS 26 Liquid Glass floating bottom bar with real-time AGSL refraction, blur, spring pill &amp; full customization for Instagram (LSPosed API 102)</string>
+</resources>

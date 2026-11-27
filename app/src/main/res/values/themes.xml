@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.InstaLiquidGlass" parent="Theme.Material3.Dark.NoActionBar">
+        <item name="colorPrimary">#64D2FF</item>
+        <item name="colorOnPrimary">#001F2A</item>
+        <item name="colorPrimaryContainer">#004D65</item>
+        <item name="colorOnPrimaryContainer">#BCE9FF</item>
+        <item name="colorSecondary">#B4CAD6</item>
+        <item name="android:statusBarColor">#0A0D12</item>
+        <item name="android:navigationBarColor">#0A0D12</item>
+        <item name="android:windowBackground">#0A0D12</item>
+    </style>
+</resources>
